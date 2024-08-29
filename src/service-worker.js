@@ -20,7 +20,7 @@ const REPEAT_REQUESTS = {
 }
 
 const FILES_FOR_CACHE = [
-	'/',	
+	'/ahj-lesson12-task3/',	
 	'/images/ui',
 	'/app.js',
 	'/app.css',
