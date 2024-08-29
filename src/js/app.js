@@ -9,7 +9,7 @@ window.addEventListener('load', async () => {
       const registrationWorker = await navigator.serviceWorker.register(
         new URL(
           /* webpackChunkName: 'service-worker' */
-          '../service-worker.js',
+          './service-worker.js',
           import.meta.url,
         ),
       );
