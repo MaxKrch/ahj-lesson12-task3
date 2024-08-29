@@ -7,6 +7,10 @@ const webpack = require('webpack');
 
 module.exports = {
 	target: 'web',
+  entry: {
+    'app': path.resolve(__dirname, './src/index.js'),
+    'service-worker':path.resolve(__dirname, './src/service-worker.js')
+  },
 	output: {
 		clean: true,
 		path: path.resolve(__dirname, 'dist'),

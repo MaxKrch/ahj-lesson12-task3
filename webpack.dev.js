@@ -18,7 +18,6 @@ module.exports = merge(common, {
     static: [
       {
         directory: './src/index.html',
-        directory: './src/js/workers/'
       },
     ],
     client: {
