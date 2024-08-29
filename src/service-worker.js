@@ -21,11 +21,11 @@ const REPEAT_REQUESTS = {
 
 const FILES_FOR_CACHE = [
 	'./',	
-	// './images/ui',
-	// './app.js',
-	// './app.css',
-	// './index.html',
-	// './service-worker.js'
+	'./images/ui',
+	'./app.js',
+	'./app.css',
+	'./index.html',
+	'./service-worker.js'
 ]
 
 self.addEventListener('install', event => {
