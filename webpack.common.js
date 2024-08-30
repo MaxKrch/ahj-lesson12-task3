@@ -9,14 +9,25 @@ module.exports = {
 	target: 'web',
   entry: {
     'app': path.resolve(__dirname, './src/index.js'),
-    'service-worker':path.resolve(__dirname, './src/service-worker.js')
+    'service-worker': path.resolve(__dirname, './src/service-worker.js')
   },
 	output: {
 		clean: true,
 		path: path.resolve(__dirname, 'dist'),
 		publicPath: '',
-		assetModuleFilename: 'images/[hash][ext]',
-    filename: '[name].js',
+		assetModuleFilename: (pathData) => {
+			const filePathArray = path
+				.dirname(pathData.filename)
+				.split('/')
+				.slice(1)
+			const filePath = filePathArray.join('/');
+
+			if(filePathArray[1] === 'ui') {
+				return `${filePath}/[name][ext]`
+			}
+	
+			return `${filePath}/[name]-[hash][ext]`
+		},
  	},
 	module: {
 		rules: [

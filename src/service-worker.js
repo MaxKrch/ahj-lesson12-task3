@@ -21,12 +21,18 @@ const REPEAT_REQUESTS = {
 
 const FILES_FOR_CACHE = [
 	'./',	
-	// './images/ui',
+	'./img/ui/bg.jpg',
 	'./app.js',
 	'./app.css',
 	'./index.html',
 	'./service-worker.js'
 ]
+
+const HOST_NAMES = {
+	IMAGES: 'loremflickr.com',
+	FRONTEND: 'localhost'
+	// FRONTEND: 'localhost'
+}
 
 self.addEventListener('install', event => {
 	event.waitUntil(onInstall())
@@ -59,22 +65,25 @@ const onMessage = async (event) => {
 }
 
 const onFetch = async (event) => {
+	const client = event.clientId;
 	const requestUrl = new URL(event.request.url);
 
 	if(requestUrl.hostname === 'loremflickr.com') {
-		event.respondWith(onRequestImage(event));
+		event.respondWith(requestImage(event));
 		return;
 	}
 
 	if(requestUrl.pathname.startsWith('/news')) {
-		event.respondWith(onRequestNews(event));
+		event.respondWith(requestNews(event));
 		return;
 	}
+console.log(requestUrl.hostname)
+	// const cachedFile 
 }
 
 
 
-const onRequestNews = async (event) => {
+const requestNews = async (event) => {
 	const response = await fetch(event.request)
 	.catch(err => {
 		postMessageToApp({
@@ -103,7 +112,7 @@ const onRequestNews = async (event) => {
 	return response;	
 }
 
-const	onRequestImage = async (event) => {
+const	requestImage = async (event) => {
 	const cachedResponse = await getResponseFromCache(event.request, KEY_LAST_CACHE_IMAGES);
 
 	if(cachedResponse) {	
