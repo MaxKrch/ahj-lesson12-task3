@@ -15,7 +15,7 @@ export default function createNewsItem(news) {
 }
 
 const createNewsDate = (news) => {
-  const date = moment(news.date).locale('ru').format('DD.MM.yy HH:MM');
+  const date = moment(news.date).locale('ru').format('DD.MM.yy HH:mm');
   const dateEl = document.createElement(`div`);
 
   dateEl.classList.add(`news-item__date`);

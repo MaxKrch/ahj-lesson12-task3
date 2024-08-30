@@ -13,12 +13,11 @@ window.addEventListener('load', async () => {
           import.meta.url,
         ),
       );
-
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
+      
+      if (registrationWorker.waiting) {
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
         window.location.reload();
       });
-
-      if (registrationWorker.waiting) {
         askUserAboutUpdate(registrationWorker.waiting);
       }
     }

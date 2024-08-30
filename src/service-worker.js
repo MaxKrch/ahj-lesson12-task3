@@ -30,8 +30,8 @@ const FILES_FOR_CACHE = [
 
 const HOST_NAMES = {
 	IMAGES: 'loremflickr.com',
-	FRONTEND: 'localhost'
 	// FRONTEND: 'localhost'
+	FRONTEND: 'maxkrch.github.io'
 }
 
 self.addEventListener('install', event => {
@@ -65,11 +65,10 @@ const onMessage = async (event) => {
 }
 
 const onFetch = async (event) => {
-	const client = event.clientId;
 	const requestUrl = new URL(event.request.url);
 
-	if(requestUrl.hostname === 'loremflickr.com') {
-		event.respondWith(requestImage(event));
+	if(requestUrl.hostname === HOST_NAMES.FRONTEND) {
+		event.respondWith(requestFrontendFile(event));
 		return;
 	}
 
@@ -77,11 +76,23 @@ const onFetch = async (event) => {
 		event.respondWith(requestNews(event));
 		return;
 	}
-console.log(requestUrl.hostname)
-	// const cachedFile 
+
+	if(requestUrl.hostname === HOST_NAMES.IMAGES) {
+		event.respondWith(requestImage(event));
+		return;
+	}
 }
 
+const requestFrontendFile = async (event) => {
+	const cache = await caches.open(KEY_LAST_CACHE);
+	const cachedFile = await cache.match(event.request);
 
+	if(cachedFile) {
+		return cachedFile;
+	}
+
+	return fetch(event.request)
+}
 
 const requestNews = async (event) => {
 	const response = await fetch(event.request)
@@ -90,7 +101,7 @@ const requestNews = async (event) => {
 			type: 'Error',
 			text: "Error Request News" ,
 			data: err
-		})
+		}, event.clientId)
 	})
 
 	if(response?.status >= 200 && response?.status < 300) {
@@ -100,7 +111,7 @@ const requestNews = async (event) => {
 	}
 		
 	clearRepeatRequestNews()
-	repeatRequestNews(event.request);
+	repeatRequestNews(event);
 
 	const cachedResponse = await getResponseFromCache(event.request, KEY_LAST_CACHE_DYNAMIC);
 		
@@ -126,7 +137,7 @@ const	requestImage = async (event) => {
 			type: 'Error',
 			text: "Error Request Image" ,
 			data: err
-		});
+		}, event.clientId);
 
 		return; 
 	})
@@ -170,12 +181,14 @@ const saveImageToCache = async (url, key) => {
 	await cache.add(url);
 }
 
-const postMessageToApp = async (message) => {
+const postMessageToApp = async (message, clientId) => {
 	const clientsArray = await clients.matchAll()
-	clientsArray.forEach(client => client.postMessage(message))
+	const client = clientsArray.find(client => client.id === clientId);
+
+	client.postMessage(message);
 }
 
-const repeatRequestNews = async (request) => {
+const repeatRequestNews = async ({ request, clientId }) => {
 	if(REPEAT_REQUESTS.NEWS.timer) {
 		clearTimeout(REPEAT_REQUESTS.NEWS.timer);
 	}
@@ -193,16 +206,21 @@ const repeatRequestNews = async (request) => {
 		postMessageToApp({
 			type: 'Upload',
 			text: 'Upload New Newses',
-		})
+		}, clientId)
 		return;
 	}
 
 	REPEAT_REQUESTS.NEWS.next += REPEAT_REQUESTS.NEWS.delay;
 	REPEAT_REQUESTS.NEWS.count += 1;
 
-	REPEAT_REQUESTS.NEWS.timer = setTimeout((request) => {
-		repeatRequestNews(request)
-	}, REPEAT_REQUESTS.NEWS.next, request);
+	const requestData = {
+		request, 
+		clientId
+	}
+
+	REPEAT_REQUESTS.NEWS.timer = setTimeout((requestData) => {
+		repeatRequestNews(requestData)
+	}, REPEAT_REQUESTS.NEWS.next, requestData);
 }
 
 const clearRepeatRequestNews = () => {
