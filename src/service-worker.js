@@ -21,7 +21,7 @@ const REPEAT_REQUESTS = {
 
 const FILES_FOR_CACHE = [
 	// './',	
-	'./images/',
+	// './images/ui',
 	'./app.js',
 	'./app.css',
 	'./index.html',
