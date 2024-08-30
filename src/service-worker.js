@@ -119,7 +119,6 @@ const requestNews = async (event) => {
 		console.log('response from cache');
 		return cachedResponse;
 	} 
-
 	return response;	
 }
 
@@ -138,12 +137,12 @@ const	requestImage = async (event) => {
 			text: "Error Request Image" ,
 			data: err
 		}, event.clientId);
-
 		return; 
 	})
 
-	event.waitUntil(saveRequestToCache(event.request, response.clone(), KEY_LAST_CACHE_IMAGES))
-	
+	if(response?.status >= 200 && response?.status < 300) {
+		event.waitUntil(saveRequestToCache(event.request, response.clone(), KEY_LAST_CACHE_IMAGES))
+	}
 	return response;
 }
 
